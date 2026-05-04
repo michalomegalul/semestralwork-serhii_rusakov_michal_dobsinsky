@@ -1,0 +1,55 @@
+======================================================================
+KAPITOLA 4 — TEST VLIVU COVID-19 NA DENNÍ AKTIVITU
+======================================================================
+
+H0: Průměrná denní aktivita je stejná ve všech třech obdobích.
+H1: Alespoň jedno období má jinou průměrnou denní aktivitu.
+Hladina významnosti: α = 0,05
+
+--- Popisná statistika denní aktivity podle období ---
+            count    mean  median    std  min   max
+period                                             
+covid         671   967.6   919.0  353.5  393  6148
+post_covid   1461  1022.8   950.0  323.8  475  3964
+pre_covid    1461   593.5   525.0  302.4  196  4260
+
+--- Shapiro-Wilk test normality (H0: data jsou z normálního rozdělení) ---
+   Pre-COVID (2016–2019)                W=0.7335  p=2.498e-43  → NENORMÁLNÍ
+   COVID (březen 2020 – 2021)           W=0.7120  p=2.335e-32  → NENORMÁLNÍ
+   Post-COVID (2022–2025)               W=0.8604  p=3.901e-34  → NENORMÁLNÍ
+
+--- Levene test homogenity rozptylů (H0: rozptyly jsou stejné) ---
+   W=8.9286  p=0.0001355  → rozptyly jsou RŮZNÉ
+
+--- Volba primárního testu ---
+   Předpoklady ANOVY NEsplněny (sešikmená data, různé rozptyly).
+   → Kruskal-Wallis je primární test, ANOVA je referenční.
+
+--- One-way ANOVA ---
+   F = 719.70
+   p = 1.494e-263
+   η² = 0.2862  (eta-squared, podíl variability vysvětlený obdobím)
+   ZAMÍTÁME H0 na hladině 0,05
+
+--- Kruskal-Wallis test (neparametrická alternativa) ---
+   H = 1541.29
+   p = 0
+   ε² = 0.4288
+   ZAMÍTÁME H0 na hladině 0,05
+
+--- Tukey HSD post-hoc (které dvojice se liší?) ---
+       Multiple Comparison of Means - Tukey HSD, FWER=0.05       
+=================================================================
+  group1     group2    meandiff p-adj    lower     upper   reject
+-----------------------------------------------------------------
+     covid post_covid   55.2391 0.0007   20.1205   90.3578   True
+     covid  pre_covid -374.0401    0.0 -409.1588 -338.9215   True
+post_covid  pre_covid -429.2793    0.0 -457.1418 -401.4167   True
+-----------------------------------------------------------------
+
+======================================================================
+ZÁVĚR
+======================================================================
+Na hladině významnosti 5 % ZAMÍTÁME H0 (p = 0).
+Mezi obdobími existuje statisticky významný rozdíl v průměrné
+denní aktivitě. Konkrétní dvojice viz Tukey HSD výše.

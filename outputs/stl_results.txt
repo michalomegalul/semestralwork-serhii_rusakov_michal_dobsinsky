@@ -1,0 +1,38 @@
+======================================================================
+STL DEKOMPOZICE DENNÍ AKTIVITY
+======================================================================
+
+Časové rozpětí: 2016-01-01 – 2025-12-31
+Počet dní: 3 653
+Průměr / medián achievementů za den: 835 / 796
+
+--- Síla komponent ---
+Variance trendu:    40 928
+Variance sezónnosti:42 266
+Variance reziduí:   64 852
+
+Síla sezónnosti (Hyndman-Athanasopoulos):
+   F_S = max(0, 1 - Var(R) / Var(R+S)) = 0.335
+Síla trendu:
+   F_T = max(0, 1 - Var(R) / Var(R+T)) = 0.412
+
+Hodnoty F blízko 1 = silná komponenta; blízko 0 = slabá.
+
+--- 10 nejvyšších kladných reziduí (anomálně aktivní dny) ---
+   2021-11-13  reziduum = +5 304
+   2018-09-04  reziduum = +3 701
+   2018-04-15  reziduum = +2 927
+   2018-04-11  reziduum = +2 854
+   2024-11-29  reziduum = +2 849
+   2023-09-28  reziduum = +2 246
+   2019-03-17  reziduum = +2 123
+   2018-03-13  reziduum = +1 607
+   2020-09-26  reziduum = +1 555
+   2022-02-13  reziduum = +1 490
+
+--- 5 nejnižších záporných reziduí (anomálně klidné dny) ---
+   2016-03-17  reziduum = -933
+   2025-12-31  reziduum = -878
+   2024-12-31  reziduum = -823
+   2025-12-01  reziduum = -815
+   2025-01-06  reziduum = -750

@@ -1,0 +1,23 @@
+======================================================================
+DETEKCE BODŮ ZMĚNY (CHANGEPOINT DETECTION)
+======================================================================
+
+Vstup: měsíční agregát achievementů, 120 měsíců
+Období: 2016-01-01 až 2025-12-01
+
+--- PELT s RBF metrikou (penalty=10) ---
+Detekováno 1 bodů změny:
+   2020-03-01
+
+--- Binary segmentation (n_breaks=4) ---
+4 nejvýraznější body změny:
+   2017-09-01
+   2020-03-01
+   2020-08-01
+   2025-08-01
+
+--- Klíčové události pro srovnání ---
+   2020-03-11  WHO vyhlášení pandemie
+   2020-03-16  Česko: vyhlášení nouzového stavu
+   2021-04-12  Česko: konec nouzového stavu
+   2023-09-27  Steam: CS:GO → CS2 přechod

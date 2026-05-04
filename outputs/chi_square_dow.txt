@@ -1,0 +1,33 @@
+======================================================================
+CHI-SQUARE TEST ROVNOMĚRNOSTI DNŮ V TÝDNU (k Tab. 3.1)
+======================================================================
+
+H0: Achievementy jsou rovnoměrně rozděleny přes 7 dní (každý 1/7).
+H1: Distribuce není rovnoměrná.
+Hladina významnosti: α = 0,05
+
+--- Tabulka pozorovaných vs. očekávaných četností ---
+    Den  Pozorováno  Očekáváno  Reziduum  Std. reziduum
+Pondělí      403454     435834    -32380         -49.05
+  Úterý      394200     435834    -41634         -63.06
+ Středa      388324     435834    -47510         -71.97
+Čtvrtek      395761     435834    -40073         -60.70
+  Pátek      432487     435834     -3347          -5.07
+ Sobota      512471     435834     76637         116.09
+ Neděle      524139     435834     88305         133.76
+
+Celkový počet achievementů: 3 050 836
+
+--- Výsledek testu ---
+   χ² = 46639.59
+   df = 6  (počet dní − 1)
+   p  = 0
+   Cramérovo V = 0.0505  (síla efektu)
+
+   ZAMÍTÁME H0 na hladině 0,05
+
+Interpretace standardizovaných reziduí:
+   |z| > 2 → den se významně liší od očekávané rovnoměrné distribuce.
+   Kladné z = více aktivity než by odpovídalo rovnoměrnému rozložení,
+   záporné z = méně aktivity.
+   

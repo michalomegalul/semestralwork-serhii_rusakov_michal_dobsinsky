@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# DB cache - data nesmí do veřejného repa, je tam citlivé Steam ID
+data/
+
+# Archive of old runs - locally organized, not for repo
+archive/
+
+# Výstupy - tyhle můžete commitovat, pokud chcete (obhajoba je mít hotové)
+# outputs/
+
+# Drafts of the paper - typically not in git (Word merges badly)
+drafts/
+
+# Editory
+.vscode/
+.idea/
+*.swp
+
+# Secrets - kdyby se omylem vytvořil .env soubor
+.env
+*.env
+
+# Claude Code local memory (machine-specific, not for sharing)
+.claude/local/
+CLAUDE.local.md

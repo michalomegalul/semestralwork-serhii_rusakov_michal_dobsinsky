@@ -1,0 +1,30 @@
+======================================================================
+KORELAČNÍ ANALÝZA
+======================================================================
+
+Hladina významnosti: α = 0,05
+
+--- A) Počet vlastněných her vs. odehraný čas ---
+
+Počet vlastněných her ↔ Odehraný čas (hodiny)
+   n = 18 154
+   Pearson  r = +0.2437  p = 9.693e-244  (slabá)
+   Spearman ρ = +0.5312  p = 0  (silná)
+
+--- B) Cena hry vs. počet unikátních hráčů ---
+
+Cena (EUR) ↔ Počet unikátních hráčů
+   n = 7 133
+   Pearson  r = +0.0645  p = 5.002e-08  (zanedbatelná)
+   Spearman ρ = +0.1904  p = 3.125e-59  (slabá)
+
+--- C) Počet vlastněných her vs. odhadovaná útrata ---
+
+Počet vlastněných her ↔ Odhadovaná útrata (EUR)
+   n = 18 154
+   Pearson  r = +0.8505  p = 0  (velmi silná)
+   Spearman ρ = +0.9204  p = 0  (velmi silná)
+
+Pozn.: U silně sešikmených dat (vaše knihovny mají medián 0,
+průměr 32) je Spearmanova ρ spolehlivější než Pearsonova r,
+protože pracuje s pořadím a není citlivá na outliery.
