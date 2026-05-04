@@ -6,19 +6,13 @@ agregace tahané z DB jediným SQL na metodu.
 ## Setup
 
 ```bash
-# 1. Vytvoř virtual environment
+# 1. Vytvoř VE
 python -m venv venv
 source venv/bin/activate   # Linux/Mac
 # venv\Scripts\activate     # Windows
 
 # 2. Nainstaluj závislosti
 pip install -r requirements.txt
-
-# 3. Nastav DB heslo (NIKDY ho necommituj do gitu!)
-export PG_PASSWORD='vaše_skutečné_heslo'
-
-# Volitelně, pokud DB neběží na 192.168.4.32:
-export PG_HOST='localhost'
 ```
 
 ## Spuštění
@@ -49,12 +43,12 @@ semestralka/
 ├── analysis_correlation.py     # Pearson + Spearman, 3 dvojice
 ├── analysis_stl.py             # Trend / sezónnost / reziduum
 ├── analysis_changepoint.py     # PELT + Binseg
-├── main.py                     # Runner pro vše
-├── data/                       # CSV cache (gitignore!)
-└── outputs/                    # Reporty + grafy do práce
+├── main.py                     # Zapne pro vše
+├── data/                       # CSV cache
+└── outputs/                    # Reporty + grafy
 ```
 
-## Co kam patří v textu práce
+## Co patří kam
 
 | Soubor v outputs/         | Kapitola práce |
 |---------------------------|----------------|
