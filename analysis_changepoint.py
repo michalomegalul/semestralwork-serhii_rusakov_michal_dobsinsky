@@ -21,6 +21,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.lines import Line2D
 
 try:
     import ruptures as rpt
@@ -114,7 +115,6 @@ def run() -> None:
                 rotation=90, va="top", fontsize=9, color="red")
 
     # Custom legenda.
-    from matplotlib.lines import Line2D
     legend_items = [
         Line2D([0], [0], color="#444", linewidth=1.5, label="Měsíční aktivita"),
         Line2D([0], [0], color="#1f77b4", linewidth=1.5, label="PELT body změny"),

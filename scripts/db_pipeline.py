@@ -360,7 +360,6 @@ def process_steam_users():
             )
 
     print("\nPipeline Complete.")
----------------------- #
 
 if __name__ == "__main__":
     backfill_existing_users()
