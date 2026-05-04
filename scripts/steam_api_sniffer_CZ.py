@@ -1,11 +1,16 @@
 import json
+import os
 import time
 from collections import deque
 
 import requests
+from dotenv import load_dotenv
 
-# --- CONF ---
-API_KEY = "008A4222699A40BED8ADFA44AD7B66D0"
+load_dotenv()
+
+
+# --- CONFIGURATION ---
+API_KEY = os.getenv("STEAM_API_KEY")
 START_STEAM_ID = "76561198972460673"  # Seed
 TARGET_CZ_COUNT = 50000  # GOAL unique IDs
 OUTPUT_FILE = "czech_steam_ids_only.jsonl"

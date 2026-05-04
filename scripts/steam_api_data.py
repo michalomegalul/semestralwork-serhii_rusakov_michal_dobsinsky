@@ -1,7 +1,13 @@
-import requests
+import os
 
-# --- CONF ---
-API_KEY = "008A4222699A40BED8ADFA44AD7B66D0"
+import requests
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+# --- CONFIGURATION ---
+API_KEY = os.getenv("STEAM_API_KEY")
 STEAM_ID = "76561198972460673"
 TARGET_CZ_COUNT = 50000
 OUTPUT_FILE = "czech_steam_data_raw.jsonl"

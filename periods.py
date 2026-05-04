@@ -8,7 +8,6 @@ Tři DISJUNKTNÍ období (žádný překryv → ANOVA dává smysl):
 
 Pozn.: Rok 2020-leden a 2020-únor záměrně vynecháváme, protože
 v Česku ještě nebyla zavedena žádná opatření a nárůst je až od března.
-Tento "buffer" je potřeba zmínit v textu jako součást metodiky.
 """
 
 from __future__ import annotations

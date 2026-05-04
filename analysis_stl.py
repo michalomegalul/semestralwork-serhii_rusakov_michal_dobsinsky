@@ -2,31 +2,20 @@
 analysis_stl.py - STL dekompozice denní časové řady aktivity.
 
 STL = Seasonal-Trend decomposition using Loess. Rozloží řadu na:
-    - Trend     (dlouhodobý směr — odpovídá růstu/poklesu Steamu)
-    - Seasonal  (opakující se vzor — roční cyklus s vrcholem v prosinci)
-    - Reziduum  (zbytek — anomálie a šum)
+    - Trend     (dlouhodobý směr  odpovídá růstu/poklesu Steamu)
+    - Seasonal  (opakující se vzor  roční cyklus s vrcholem v prosinci)
+    - Reziduum  (zbytek  anomálie a šum)
 
-Proč právě STL a ne klasický `seasonal_decompose`:
-    - Zvládá změny síly sezónnosti v čase (a vaše data ji mají —
-      Vánoce 2016 ≠ Vánoce 2023 co do absolutních čísel).
-    - Robustnější k outlierům (achievement spam dny by jinak
-      zkreslily trend).
-
-Použití v textu:
-    Z trendové komponenty se rovnou dají odečíst klíčové události:
-    skok na jaře 2020 (COVID lockdown) bude vidět okamžitě.
-    Reziduum identifikuje konkrétní anomální dny — to jsou ty
-    achievement-spam epizody, které zmiňujete v kapitole 3.3.
 """
+
 from __future__ import annotations
 
 from pathlib import Path
 
+import db
 import matplotlib.pyplot as plt
 import pandas as pd
 from statsmodels.tsa.seasonal import STL
-
-import db
 
 OUTPUT_DIR = Path(__file__).parent / "outputs"
 OUTPUT_DIR.mkdir(exist_ok=True)
@@ -35,13 +24,7 @@ OUTPUT_DIR.mkdir(exist_ok=True)
 def run() -> None:
     daily = db.load("daily_activity").set_index("day")["achievements"]
 
-    # STL chce úplný DatetimeIndex bez mezer. db.py to už zajišťuje
-    # pomocí generate_series, ale pro jistotu reindex.
     daily = daily.asfreq("D", fill_value=0)
-
-    # period=365 → roční sezónnost. seasonal=13 → flexibilita sezónního
-    # vzoru (musí být liché číslo ≥ 7). Robustní mód = méně citlivé na
-    # achievement-spam outliers.
     print("Spouštím STL dekompozici (může chvíli trvat, ~3,6k bodů)...")
     stl = STL(daily, period=365, seasonal=13, robust=True)
     res = stl.fit()
@@ -106,8 +89,13 @@ def run() -> None:
 
     # Vyznačit COVID začátek na trendu pro vizuální argument.
     for ax in axes:
-        ax.axvline(pd.Timestamp("2020-03-01"), color="orange",
-                   linestyle="--", alpha=0.5, label="COVID start")
+        ax.axvline(
+            pd.Timestamp("2020-03-01"),
+            color="orange",
+            linestyle="--",
+            alpha=0.5,
+            label="COVID start",
+        )
         ax.grid(alpha=0.3)
     axes[1].legend(loc="upper left")
 
@@ -115,7 +103,7 @@ def run() -> None:
     out = OUTPUT_DIR / "stl_decomposition.png"
     fig.savefig(out, dpi=150)
     plt.close(fig)
-    print(f"\n📊 Graf uložen do {out}")
+    print(f"\n Graf uložen do {out}")
 
 
 if __name__ == "__main__":

@@ -1,18 +1,15 @@
 """
-db.py - Datová vrstva.
+db.py - Data.
 
 Jediné místo, které sahá na PostgreSQL. Stáhne všechny agregace
-potřebné pro kapitolu 4 (a další) jedním průchodem a uloží je do
+potřebné pro kapitolu 4 jedním průchodem a uloží je do
 CSV cache v adresáři data/. Další běhy už DB nezatěžují.
 
 Použití:
     python db.py              # stáhne vše a uloží do data/*.csv
     python db.py --refresh    # vynutí stažení i když cache existuje
-
-Heslo k DB se NEČTE z kódu. Nastavte si:
-    export PG_PASSWORD='vaše_heslo'
-    export PG_HOST='192.168.4.32'   # volitelné, default localhost
 """
+
 from __future__ import annotations
 
 import argparse
@@ -29,17 +26,8 @@ load_dotenv()
 DATA_DIR = Path(__file__).parent / "data"
 DATA_DIR.mkdir(exist_ok=True)
 
-# ----------------------------------------------------------------------------
-# SQL dotazy. Každý vrací jeden DataFrame, který se uloží do samostatného CSV.
-# ----------------------------------------------------------------------------
 
 QUERIES: dict[str, str] = {
-    # --------------------------------------------------------------------
-    # Denní časová řada achievementů 2016-01-01 až 2025-12-31.
-    # Tohle je hlavní vstup pro ANOVA, STL, CUSUM a chi-square (po agregaci).
-    # GENERATE_SERIES zaručí, že máme i dny s nula achievementy
-    # (jinak by chyběly v řadě a STL by se zlomilo).
-    # --------------------------------------------------------------------
     "daily_activity": """
         WITH days AS (
             SELECT generate_series(
@@ -64,7 +52,6 @@ QUERIES: dict[str, str] = {
         LEFT JOIN counts c USING (day)
         ORDER BY d.day;
     """,
-
     # --------------------------------------------------------------------
     # Charakteristiky uživatelů: vlastněné hry a aproximovaná útrata.
     # Vstup pro korelační analýzu (počet her vs. odehraný čas, cena vs. popularita).
@@ -80,9 +67,8 @@ QUERIES: dict[str, str] = {
         LEFT JOIN Games g         ON g.app_id    = ul.app_id
         GROUP BY u.steam_id;
     """,
-
     # --------------------------------------------------------------------
-    # Per-game agregace pro analýzu cena ↔ popularita.
+    # Per-game agregace pro analýzu cena ku popularita.
     # --------------------------------------------------------------------
     "game_stats": """
         SELECT
@@ -105,10 +91,7 @@ def get_connection() -> psycopg2.extensions.connection:
     """Connection s heslem z env proměnné."""
     password = os.environ.get("PG_PASSWORD")
     if not password:
-        sys.exit(
-            "❌ Chybí PG_PASSWORD v prostředí.\n"
-            "   Spusť: export PG_PASSWORD='vaše_heslo'"
-        )
+        sys.exit(" Chybí PG_PASSWORD.\n")
 
     return psycopg2.connect(
         dbname=os.environ.get("PG_DBNAME", "postgres"),
@@ -131,7 +114,7 @@ def fetch_all(refresh: bool = False) -> dict[str, pd.DataFrame]:
     )
 
     if not need_db:
-        print("📁 Načítám z cache (data/*.csv). Použij --refresh pro nové stažení.")
+        print("Načítám z cache (data/*.csv). Použij --refresh pro nové stažení.")
         for name in QUERIES:
             results[name] = pd.read_csv(DATA_DIR / f"{name}.csv")
         return results
@@ -145,7 +128,7 @@ def fetch_all(refresh: bool = False) -> dict[str, pd.DataFrame]:
             print(f"{len(df):,} řádků")
             results[name] = df
 
-    print("✅ Hotovo. Cache uložena v data/")
+    print("Hotovo. Cache uložena v data/")
     return results
 
 
@@ -158,7 +141,6 @@ def load(name: str) -> pd.DataFrame:
     if not csv_path.exists():
         fetch_all()
     df = pd.read_csv(csv_path)
-    # Parsování datumových sloupců (pandas to z CSV nečte automaticky).
     for col in df.columns:
         if col in ("day", "date", "achievement_timestamp"):
             df[col] = pd.to_datetime(df[col])

@@ -34,9 +34,7 @@ db_pool = pool.ThreadedConnectionPool(
 )
 
 
-# ------------------------------------------------------------------ #
 # API HELPERS
-# ------------------------------------------------------------------ #
 
 
 def get_owned_games(steam_id):
@@ -117,17 +115,9 @@ def get_player_summaries(steam_ids_chunk):
     return []
 
 
-# ------------------------------------------------------------------ #
-# BACKFILL — smart delta fetch for existing 20k users
-# Skips achievements (already have 3.5M rows), only fetches missing games
-# ------------------------------------------------------------------ #
-
-
 def process_single_user_backfill(player):
     """
     Backfill version — only fetches games not already in User_Library.
-    Skips achievement fetching since we already have that data.
-    Much faster than full reprocess.
     """
     steam_id = player["steamid"]
     if player.get("communityvisibilitystate") != 3:
@@ -370,15 +360,8 @@ def process_steam_users():
             )
 
     print("\nPipeline Complete.")
-
-
-# ------------------------------------------------------------------ #
-# ENTRY POINT
-# ------------------------------------------------------------------ #
+---------------------- #
 
 if __name__ == "__main__":
-    # STEP 1: Patch your existing 20k users (run this first)
     backfill_existing_users()
 
-    # STEP 2: Continue pipeline to 50k (uncomment when backfill is done)
-    # process_steam_users()
