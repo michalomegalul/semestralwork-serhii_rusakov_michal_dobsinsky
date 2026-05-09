@@ -89,10 +89,17 @@ def t_tests():
     print("pre_covid - post_covid\t", ttest_ind(pre_covid, post_covid).pvalue, "\t", ttest_ind(pre_covid, post_covid).pvalue * 3)
     print("covid - post_covid\t", ttest_ind(covid, post_covid).pvalue, "\t", ttest_ind(covid, post_covid).pvalue * 3)
 
+def statistics():
+    global pre_covid
+    global post_covid
+    global covid
+
+    print("\nStatistické údaje:")
+    print(df.groupby("time_category", observed=True)["count"].agg(["mean", "median", "std"]))
+
 def plotting():
     global df
 
-    #sns.boxplot(data=df, x="time_category", y="count", hue="time_category")
     sns.violinplot(data=df, x="time_category", y="count", hue="time_category")
     plt.title("Nové Steam účty denně v jednotlivých obdobích")
     plt.xlabel("Časová kategorie")
@@ -103,4 +110,5 @@ variance()
 means()
 anova()
 t_tests()
+statistics()
 plotting()
