@@ -97,7 +97,28 @@ def statistics():
 def plotting():
     global df
 
-    sns.violinplot(data=df, x="time_category", y="count", hue="time_category")
+    pre_covid_df = df[df["time_category"] == "Pre-COVID (2016-2020)"]
+    covid_df = df[df["time_category"] == "COVID period (2020-2022)"]
+    post_covid_df = df[df["time_category"] == "Post-COVID (2022+)"]
+
+    def outliers(df: pd.DataFrame):
+        Q3 = df["count"].quantile(q=0.75, interpolation='linear')
+        Q1 = df["count"].quantile(q=0.25, interpolation='linear')
+        IQR = Q3 - Q1
+        lower = df["count"] > Q1 - (1.5 * IQR)
+        upper = df["count"] < Q3 + (1.5 * IQR)
+
+        df = df[(lower) & (upper)]
+
+        return df
+        
+    pre_covid_df = outliers(pre_covid_df)
+    covid_df = outliers(covid_df)
+    post_covid_df = outliers(post_covid_df)
+
+    df1 = pd.concat(objs = [pre_covid_df, covid_df, post_covid_df], ignore_index=True)
+
+    sns.violinplot(data=df1, x="time_category", y="count", hue="time_category")
     plt.title("Achievementy denně v jednotlivých obdobích")
     plt.xlabel("Časová kategorie")
     plt.ylabel("Počet")
