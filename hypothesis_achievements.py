@@ -19,7 +19,7 @@ SELECT date_trunc('day', achievement_timestamp + INTERVAL '12 hours'),
 CASE
     WHEN achievement_timestamp BETWEEN '2016-01-01' AND '2020-03-01' THEN 'Pre-COVID (2016-2020)'
     WHEN achievement_timestamp BETWEEN '2020-03-01' AND '2021-12-31' THEN 'COVID period (2020-2022)'
-    ELSE 'Post-COVID (2022+)'
+    ELSE 'Post-COVID (2022-2026)'
 END AS time_category, COUNT(date_trunc('day', achievement_timestamp + INTERVAL '12 hours'))
 FROM (
     SELECT *
@@ -36,13 +36,13 @@ with psycopg2.connect(**DB_CONFIG) as con:
 
 df = pd.DataFrame(data=data, columns=["achievement_timestamp", "time_category", "count"])
 
-df["time_category"] = pd.Categorical(values=df["time_category"], categories=["Pre-COVID (2016-2020)", "COVID period (2020-2022)", "Post-COVID (2022+)"], ordered=True)
+df["time_category"] = pd.Categorical(values=df["time_category"], categories=["Pre-COVID (2016-2020)", "COVID period (2020-2022)", "Post-COVID (2022-2026)"], ordered=True)
 
 print(df.sort_values("count", ascending=False).head())
 
 pre_covid = df[df["time_category"] == "Pre-COVID (2016-2020)"]["count"].values
 covid = df[df["time_category"] == "COVID period (2020-2022)"]["count"].values
-post_covid = df[df["time_category"] == "Post-COVID (2022+)"]["count"].values
+post_covid = df[df["time_category"] == "Post-COVID (2022-2026)"]["count"].values
 
 def variance():
     global pre_covid
@@ -99,7 +99,7 @@ def plotting():
 
     pre_covid_df = df[df["time_category"] == "Pre-COVID (2016-2020)"]
     covid_df = df[df["time_category"] == "COVID period (2020-2022)"]
-    post_covid_df = df[df["time_category"] == "Post-COVID (2022+)"]
+    post_covid_df = df[df["time_category"] == "Post-COVID (2022-2026)"]
 
     def outliers(df: pd.DataFrame):
         Q3 = df["count"].quantile(q=0.75, interpolation='linear')
