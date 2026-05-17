@@ -35,7 +35,8 @@ python analysis_changepoint.py  # Kapitola 4 — body změny
 ## Struktura
 
 ```
-semestralka/
+deskripce/
+├── main.py                     # Zapne vše najednou
 ├── db.py                       # SQL agregace + CSV cache
 ├── periods.py                  # Definice 3 období (pre/covid/post)
 ├── analysis_anova.py           # Shapiro + Levene + ANOVA + Kruskal + Tukey
@@ -43,9 +44,16 @@ semestralka/
 ├── analysis_correlation.py     # Pearson + Spearman, 3 dvojice
 ├── analysis_stl.py             # Trend / sezónnost / reziduum
 ├── analysis_changepoint.py     # PELT + Binseg
-├── main.py                     # Zapne pro vše
-├── data/                       # CSV cache
-└── outputs/                    # Reporty + grafy
+├── data/                       # CSV cache (gitignored)
+├── outputs/                    # Reporty + grafy
+└── scripts/
+    ├── ingest_data.py          # Hlavní sběr dat ze Steam API → PostgreSQL
+    ├── steam_api_sniffer.py    # BFS přes přátele → 50k Steam ID
+    ├── steam_api_sniffer_CZ.py # Varianta filtrující CZ uživatele
+    ├── steam_api_data.py       # Stažení her a achievementů pro seed uživatele
+    ├── steam_api_test.py       # Test ITAD API (historické ceny)
+    ├── db_migration.py         # Migrace DB (deduplikace, indexy)
+    └── legacy/                 # Starší explorační skripty (archiv)
 ```
 
 ## Co patří kam

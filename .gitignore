@@ -21,6 +21,10 @@ drafts/
 .env
 *.env
 
+# Root-level generated outputs (patří do outputs/, ne do rootu)
+/*.png
+/*.txt
+
 .claude/local/
 CLAUDE.local.md
 CLAUDE.md
