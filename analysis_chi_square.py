@@ -1,16 +1,10 @@
 """
 analysis_chi_square.py - Chi-square test rovnoměrnosti dnů v týdnu.
 
-V kapitole 3.1 práce uvádí, že víkendové dny mají vyšší aktivitu než
-pracovní. To je popisné tvrzení — chi-square testem ho buď potvrdíme
-statisticky, nebo ne.
-
-H0: Achievementy jsou rovnoměrně rozděleny přes všechny dny v týdnu
-    (každý den dostává 1/7 aktivity).
+H0: Achievementy jsou rovnoměrně rozděleny přes 7 dní (každý 1/7).
 H1: Distribuce není rovnoměrná.
 
-Pozn.: Test sleduje rovnoměrnost. Kromě p-hodnoty počítáme také
-Cramérovo V jako míru síly efektu.
+Výstup: outputs/chi_square_dow.txt
 """
 from __future__ import annotations
 
@@ -31,7 +25,6 @@ DAY_NAMES = ["Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota", 
 def run() -> None:
     daily = db.load("daily_activity")
 
-    # pandas: 0=Monday ... 6=Sunday — odpovídá pořadí v DAY_NAMES.
     daily["dow"] = daily["day"].dt.dayofweek
     observed = daily.groupby("dow")["achievements"].sum().reindex(range(7)).values
 
@@ -40,11 +33,8 @@ def run() -> None:
 
     chi2, p = stats.chisquare(f_obs=observed, f_exp=expected)
 
-    # Cramérovo V pro 1×k goodness-of-fit. Pro tento případ to je
-    # sqrt(chi² / (n * (k-1))).
     cramer_v = np.sqrt(chi2 / (total * (7 - 1)))
 
-    # Sestavíme tabulku.
     table = pd.DataFrame({
         "Den":            DAY_NAMES,
         "Pozorováno":     observed.astype(int),

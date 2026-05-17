@@ -1,17 +1,11 @@
 """
-analysis_correlation.py - Korelační analýza.
+analysis_correlation.py - Korelační analýza tří dvojic proměnných.
 
-Dvě otázky:
+    A) Velikost knihovny vs. celkový odehraný čas
+    B) Cena hry vs. počet unikátních hráčů
+    C) Velikost knihovny vs. odhadovaná útrata
 
-    A) Vztah mezi velikostí knihovny (počet vlastněných her) a
-       celkovým odehraným časem.
-       Očekávání: pozitivní, ale slabší korelace (sběratelé vs. hráči).
-
-    B) Vztah mezi cenou hry a počtem unikátních hráčů.
-       Očekávání: záporná korelace (levnější/free hry mají víc hráčů).
-
-Pro každou dvojici počítáme Pearson (lineární vztah) i Spearman (monotónní).
-Spearman bude pravděpodobně spolehlivější.
+Výstup: outputs/correlation.txt, outputs/correlation_scatter.png
 """
 
 from __future__ import annotations
@@ -43,7 +37,6 @@ def _interpret_r(r: float) -> str:
 
 def _correlation_block(x: pd.Series, y: pd.Series, label_x: str, label_y: str) -> str:
     """Spočítá Pearson + Spearman a vrátí formátovaný text."""
-    # Vyhodit NaN páry, jinak scipy padne.
     mask = x.notna() & y.notna()
     x, y = x[mask], y[mask]
 
@@ -75,8 +68,6 @@ def run() -> None:
         "",
     ]
 
-    # Vyhodit uživatele bez her (medián = 0 viz kap. 2) — pro ně je vztah
-    # nedefinovaný.
     active = users[users["games_owned"] > 0]
     report.append(
         _correlation_block(
@@ -90,8 +81,7 @@ def run() -> None:
 
     report.append("--- B) Cena hry vs. počet unikátních hráčů ---")
     report.append("")
-    # Filter: jen hry s nenulovou cenou (free-to-play tituly distorzují vztah).
-    paid = games[games["price_eur"] > 0]
+    paid = games[games["price_eur"] > 0]  # F2P tituly by vztah zkreslily
     report.append(
         _correlation_block(
             paid["price_eur"],
@@ -114,9 +104,7 @@ def run() -> None:
     )
     report.append("")
 
-    report.append("Pozn.: U silně sešikmených dat (vaše knihovny mají medián 0,")
-    report.append("průměr 32) je Spearmanova ρ spolehlivější než Pearsonova r,")
-    report.append("protože pracuje s pořadím a není citlivá na outliery.")
+    report.append("Pozn.: Data jsou silně sešikmená → Spearman je spolehlivější než Pearson.")
 
     text = "\n".join(report)
     print(text)

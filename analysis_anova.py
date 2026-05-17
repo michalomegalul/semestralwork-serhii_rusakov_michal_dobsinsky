@@ -1,24 +1,10 @@
 """
-analysis_anova.py - Kapitola 4: Test rozdílu denní aktivity mezi obdobími.
+analysis_anova.py - Test rozdílu denní aktivity mezi COVID obdobími.
 
-Postup (přesně v tomto pořadí, jinak se to u obhajoby rozsype):
-    1. Vstup: denní počty achievementů, přiřazené do 3 období.
-    2. Ověření normality v každém období (Shapiro-Wilk).
-    3. Ověření homogenity rozptylů (Levene).
-    4. Pokud předpoklady SELHALY → použij Kruskal-Wallis (parametrický
-       ekvivalent ANOVY pro neparametrická data) jako primární test.
-       ANOVA se počítá jako srovnávací check.
-    5. Post-hoc: Tukey HSD (pro ANOVA) + Dunn (pro Kruskal-Wallis).
-    6. Effect size: eta² a epsilon² (jen p-value je málo, recenzent
-       chce vědět, JAK velký ten rozdíl je).
+H0: Průměrná denní aktivita je stejná ve všech třech obdobích.
+H1: Alespoň jedno období má jinou průměrnou denní aktivitu.
 
-Hypotézy:
-    H0: Průměrná denní aktivita je stejná ve všech třech obdobích.
-    H1: Alespoň jedno období má jinou průměrnou denní aktivitu.
-
-Výstup:
-    - outputs/anova_results.txt   (lidsky čitelný report)
-    - outputs/anova_boxplot.png   (graf pro práci)
+Výstup: outputs/anova_results.txt, outputs/anova_boxplot.png
 """
 from __future__ import annotations
 
@@ -38,7 +24,6 @@ OUTPUT_DIR.mkdir(exist_ok=True)
 
 
 def run() -> None:
-    # ----- 1. Načtení dat -------------------------------------------------
     daily = db.load("daily_activity")
     daily["period"] = assign_period(daily["day"])
     daily = daily.dropna(subset=["period"])
@@ -58,7 +43,6 @@ def run() -> None:
     add("Hladina významnosti: α = 0,05")
     add("")
 
-    # ----- 2. Popisná statistika podle období ----------------------------
     add("--- Popisná statistika denní aktivity podle období ---")
     desc = daily.groupby("period")["achievements"].agg(
         ["count", "mean", "median", "std", "min", "max"]
@@ -66,10 +50,8 @@ def run() -> None:
     add(desc.to_string())
     add("")
 
-    # ----- 3. Shapiro-Wilk: test normality -------------------------------
     add("--- Shapiro-Wilk test normality (H0: data jsou z normálního rozdělení) ---")
-    # Pozn.: Shapiro je spolehlivý do n≈5000. U větších vzorků skoro vždy
-    # zamítne i pro prakticky normální data → bereme náhodný sample.
+    # n > 5000 → sample, jinak Shapiro zamítne i prakticky normální data
     rng = np.random.default_rng(42)
     normal_ok = True
     for name, vals in groups.items():
@@ -81,7 +63,6 @@ def run() -> None:
         add(f"   {LABELS[name]:35s}  W={W:.4f}  p={p:.4g}  → {verdict}")
     add("")
 
-    # ----- 4. Levene: test homogenity rozptylů ---------------------------
     add("--- Levene test homogenity rozptylů (H0: rozptyly jsou stejné) ---")
     levene_W, levene_p = stats.levene(*groups.values(), center="median")
     levene_ok = levene_p > 0.05
@@ -89,7 +70,6 @@ def run() -> None:
     add(f"   W={levene_W:.4f}  p={levene_p:.4g}  → rozptyly jsou {verdict}")
     add("")
 
-    # ----- 5. Volba primárního testu -------------------------------------
     add("--- Volba primárního testu ---")
     if normal_ok and levene_ok:
         add("   Předpoklady ANOVY splněny → ANOVA je primární test.")
@@ -100,10 +80,8 @@ def run() -> None:
         primary = "kruskal"
     add("")
 
-    # ----- 6. ANOVA ------------------------------------------------------
     add("--- One-way ANOVA ---")
     F, p_anova = stats.f_oneway(*groups.values())
-    # eta² = SS_between / SS_total (effect size pro ANOVA)
     all_values = np.concatenate(list(groups.values()))
     grand_mean = all_values.mean()
     ss_total = ((all_values - grand_mean) ** 2).sum()
@@ -117,7 +95,6 @@ def run() -> None:
     add(f"   {'ZAMÍTÁME' if p_anova < 0.05 else 'NEZAMÍTÁME'} H0 na hladině 0,05")
     add("")
 
-    # ----- 7. Kruskal-Wallis --------------------------------------------
     add("--- Kruskal-Wallis test (neparametrická alternativa) ---")
     H, p_kruskal = stats.kruskal(*groups.values())
     n = len(all_values)
@@ -129,7 +106,6 @@ def run() -> None:
     add(f"   {'ZAMÍTÁME' if p_kruskal < 0.05 else 'NEZAMÍTÁME'} H0 na hladině 0,05")
     add("")
 
-    # ----- 8. Post-hoc: Tukey HSD ----------------------------------------
     add("--- Tukey HSD post-hoc (které dvojice se liší?) ---")
     tukey = pairwise_tukeyhsd(
         endog=daily["achievements"],
@@ -139,7 +115,6 @@ def run() -> None:
     add(str(tukey))
     add("")
 
-    # ----- 9. Závěr -------------------------------------------------------
     p_primary = p_kruskal if primary == "kruskal" else p_anova
     add("=" * 70)
     add("ZÁVĚR")
@@ -152,7 +127,6 @@ def run() -> None:
         add(f"Na hladině významnosti 5 % NEZAMÍTÁME H0 (p = {p_primary:.4g}).")
         add("Nelze prokázat rozdíl mezi obdobími.")
 
-    # ----- Uložení reportu -----------------------------------------------
     report_text = "\n".join(report)
     print(report_text)
 
@@ -160,7 +134,6 @@ def run() -> None:
     out.write_text(report_text, encoding="utf-8")
     print(f"\n💾 Report uložen do {out}")
 
-    # ----- Vizualizace ---------------------------------------------------
     _plot_boxplot(daily)
 
 

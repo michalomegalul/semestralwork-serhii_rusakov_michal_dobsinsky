@@ -1,11 +1,7 @@
 """
 analysis_stl.py - STL dekompozice denní časové řady aktivity.
 
-STL = Seasonal-Trend decomposition using Loess. Rozloží řadu na:
-    - Trend     (dlouhodobý směr  odpovídá růstu/poklesu Steamu)
-    - Seasonal  (opakující se vzor  roční cyklus s vrcholem v prosinci)
-    - Reziduum  (zbytek  anomálie a šum)
-
+Výstup: outputs/stl_results.txt, outputs/stl_decomposition.png
 """
 
 from __future__ import annotations
@@ -29,7 +25,6 @@ def run() -> None:
     stl = STL(daily, period=365, seasonal=13, robust=True)
     res = stl.fit()
 
-    # ----- Top anomálie podle reziduí ------------------------------------
     resid = res.resid.dropna()
     top_pos = resid.nlargest(10)
     top_neg = resid.nsmallest(5)
@@ -71,7 +66,6 @@ def run() -> None:
     print(text)
     (OUTPUT_DIR / "stl_results.txt").write_text(text, encoding="utf-8")
 
-    # ----- Graf 4-panel klasika -----------------------------------------
     fig, axes = plt.subplots(4, 1, figsize=(14, 10), sharex=True)
     daily.plot(ax=axes[0], color="#444", linewidth=0.5)
     axes[0].set_ylabel("Pozorováno")
@@ -87,7 +81,6 @@ def run() -> None:
     axes[3].set_ylabel("Reziduum")
     axes[3].set_xlabel("Datum")
 
-    # Vyznačit COVID začátek na trendu pro vizuální argument.
     for ax in axes:
         ax.axvline(
             pd.Timestamp("2020-03-01"),
